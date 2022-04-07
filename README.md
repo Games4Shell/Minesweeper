@@ -30,4 +30,4 @@ Create and export an alias in order to see the top from anywhere in your shell w
 1. $ alias MinesweeperTop=$HOME/Games4Shell/Minesweeper/Minesweeper.sh -t
 2. Now when you type MinesweeperTop the top interface should start.
 
-!!!!Remember, you would need to tho this every time you close the Shell or the Terminal!!!!
+!!!!Remember, you would need to do this every time you close the Shell or the Terminal!!!!
