@@ -1,8 +1,9 @@
-import java.io.Console;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Date;
+import java.text.SimpleDateFormat;
 import java.util.Scanner;
 
 public class Top {
@@ -98,6 +99,17 @@ public class Top {
         return finalTime;
     }
 
+    public static int calculateScore(String startTime, String winTime){
+        String[] timeArrayStart = startTime.split(":");
+        String[] timeArrayWin = winTime.split(":");
+        int Hour = Integer.parseInt(timeArrayWin[0])-Integer.parseInt(timeArrayStart[0]);
+        int Min = Integer.parseInt(timeArrayWin[1])-Integer.parseInt(timeArrayStart[1]);
+        int Sec = Integer.parseInt(timeArrayWin[2])-Integer.parseInt(timeArrayStart[2]);
+        int totalTime = Hour* 3600 + Min*60 +Sec;
+        if(totalTime==0){totalTime++;}
+        return totalTime;
+    }
+
     public static String setTime(int time){
         if (time<10){
             return "0"+time;
@@ -144,12 +156,13 @@ public class Top {
         System.out.println("You are top "+positionInTop);
     }
 
-    public static void inTop(String name, String dateNow, int puntuaction,String difficulty){
+    public static void inTop(String name, int puntuaction,String difficulty, boolean printInShell){
         setTops();
         readTop(difficulty);
         getTopValues();
+        String dateNow = setDate();
         int positionInTop = introduceInTop(name,dateNow,puntuaction);
-        printTopPosition(positionInTop);
+        if (printInShell){printTopPosition(positionInTop);}
         rewriteTop(difficulty);
     }
 
@@ -161,8 +174,7 @@ public class Top {
     }
 
     private static int setVisibleTop(){
-        Console console = System.console();
-        String inputTopSize = console.readLine("Choose the size of the top displayed : ");
+        String inputTopSize = Terminal.readLine("Choose the size of the top displayed : ");
         int topSize =0;
         try{
             topSize = Integer.parseInt(inputTopSize);
@@ -187,4 +199,16 @@ public class Top {
         printTop(topSize);
     }
     
+    public static String setTime(){
+        SimpleDateFormat date = new SimpleDateFormat("HH:mm:ss");
+        String time = date.format(new Date());
+        return time;
+    }
+
+    public static String setDate() {
+        SimpleDateFormat date = new SimpleDateFormat("yyyy/MM/dd");
+        String time = date.format(new Date());
+        return time; 
+    }
+
 }

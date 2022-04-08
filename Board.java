@@ -7,72 +7,21 @@ public class Board {
     public int minesNumber;
     private int mine = 9;
     private int[][] initialSpace = new int[2][2];
-    private int firstStrikeCleanSize;
-    private int[] firstStrike;
 
-    Board(String difficulty, int[] firstStrike) {
-        this.firstStrike = firstStrike;
-        createBoard(difficulty);
-    }
-
-    private void createBoard(String difficulty) {
-        setBoardSize(difficulty);
-        setInitialSpace();
+    Board(int[][] blankBoard, int[] firstStrike) {
+        this.board = blankBoard;
+        setInitialSpace(firstStrike);
         setBlankBoard();
         setMines();
         removeInitialSpace();
     }
 
-    private void removeInitialSpace() {
-        for (int i = 0; i < this.board.length; i++) {
-            for (int j = 0; j < this.board[0].length; j++) {
-                if (this.board[i][j] >= 10) {
-                    this.board[i][j] -= 10;
-                }
-            }
-        }
-    }
-
-    public void printBoard() {
-        for (int i = 0; i < this.board.length; i++) {
-            for (int j = 0; j < this.board[0].length; j++) {
-                if (this.board[i][j] == 0) {
-                    System.out.print("  ");
-                } else {
-                    System.out.print(this.board[i][j] + " ");
-                }
-
-            }
-            System.out.println();
-        }
-    }
-
-    private void setBoardSize(String difficulty) {
-        if (difficulty.equals("Easy")) {
-            this.board = new int[8][8];
-            this.mineBoard = new boolean[8][8];
-            this.minesNumber = 10;
-            this.firstStrikeCleanSize = 2;
-        }
-        if (difficulty.equals("Medium")) {
-            this.board = new int[16][16];
-            this.mineBoard = new boolean[16][16];
-            this.minesNumber = 40;
-            this.firstStrikeCleanSize = 3;
-        }
-        if (difficulty.equals("Hard")) {
-            this.board = new int[24][24];
-            this.mineBoard = new boolean[24][24];
-            this.minesNumber = 99;
-            this.firstStrikeCleanSize = 4;
-        }
-    }
-
-    private void setInitialSpace() {
-        this.initialSpace[0][0] = this.firstStrike[0] - this.firstStrikeCleanSize - 1;
-        this.initialSpace[0][1] = this.firstStrike[0] + this.firstStrikeCleanSize + 1;
-        this.initialSpace[1][0] = this.firstStrike[1] + this.firstStrikeCleanSize + 1;
-        this.initialSpace[1][1] = this.firstStrike[1] - this.firstStrikeCleanSize - 1;
+    private void setInitialSpace(int[] firstStrike) {
+        int firstStrikeCleanSize = this.board.length / 4;
+        this.initialSpace[0][0] = firstStrike[0] - firstStrikeCleanSize - 1;
+        this.initialSpace[0][1] = firstStrike[0] + firstStrikeCleanSize + 1;
+        this.initialSpace[1][0] = firstStrike[1] + firstStrikeCleanSize + 1;
+        this.initialSpace[1][1] = firstStrike[1] - firstStrikeCleanSize - 1;
     }
 
     private boolean isInInitialSpace(int row, int col) {
@@ -146,6 +95,16 @@ public class Board {
     private void setTile(int row, int col) {
         if (board[row][col] != 9) {
             board[row][col] += 1;
+        }
+    }
+
+    private void removeInitialSpace() {
+        for (int i = 0; i < this.board.length; i++) {
+            for (int j = 0; j < this.board[0].length; j++) {
+                if (this.board[i][j] >= 10) {
+                    this.board[i][j] -= 10;
+                }
+            }
         }
     }
 
