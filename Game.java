@@ -1,6 +1,8 @@
+
+
 public class Game {
 
-    public String[] availableDiffiiculties = {"Easy","Medium","Hard"};
+    private String[] availableDiffiiculties = {"Easy","Medium","Hard"};
     private int[] minesInDifficulties = {10,40,99};
     private int[][] availableBoardSizes ={{8,8},{16,16},{24,24}};
 
@@ -8,40 +10,35 @@ public class Game {
     private boolean[][] mineBoard;
     private int[][] board;
     private int[] strikePos;
-    public Board actualBoard;
+    private Board actualBoard;
     public boolean isLost = false;
     public int minesNumber;
     private int gameScore;
 
+    private String playerName;
+    private String difficulty;
+
     private final String requestStrikeMessage = "Choose your move : ";
     private final String badStrikeInput = "The imput should be : row col";
 
-    public static final String ANSI_RESET = "\u001B[0m";
-    public static final String ANSI_BLACK = "\u001B[30m";
-    public static final String ANSI_BACKGROUND_RED	= "\u001B[41m";
-    public static final String ANSI_RED = "\u001B[31m";
-    public static final String ANSI_GREEN = "\u001B[32m";
-    public static final String ANSI_YELLOW = "\u001B[33m";
-    public static final String ANSI_BLUE = "\u001B[34m";
-    public static final String ANSI_PURPLE = "\u001B[35m";
-    public static final String ANSI_CYAN = "\u001B[36m";
-    public static final String ANSI_WHITE = "\u001B[37m";
-
-    Game(String difficulty, String playerName, boolean printInShell) {
-        setBoardSize(difficulty);
+    Game(boolean printInShell) {
+        setPlayer(printInShell);
+        setBoardSize();
         requestFirstStrike(printInShell);
         String startTime = Top.setTime();
         printBoard(printInShell);
         setBoard();
+        //Terminal.executeCommand("clear");
         while ( !isGameLost() && !isGameSolved()){
             requestStrike(printInShell);
+            //Terminal.executeCommand("clear");
         }
         if (isGameSolved()){
             printWinMessage(printInShell);
             String winTime = Top.setTime();
             this.gameScore = Top.calculateScore(startTime, winTime);
             printScore(printInShell);
-            Top.inTop(playerName, gameScore, difficulty, printInShell);
+            Top.inTop(this.playerName, gameScore, this.difficulty, printInShell);
             finish();
         }
         if (isGameLost()){
@@ -50,9 +47,45 @@ public class Game {
         }
     }
 
-    private void setBoardSize(String difficulty) {
+    private void setPlayer(boolean inShell) {
+        if (inShell){
+            requestNameShell();
+            requestDifficultyShell();
+        } else {
+            this.playerName = "Bot";
+        }
+    }
+
+    private void requestDifficultyShell() {
+        String difficulty = Terminal.readLine("Choose the difficulty : ");
+        if(!checkDifficulty(difficulty)){
+            requestDifficultyShell();
+        }
+        this.difficulty = difficulty;
+    }
+
+    private boolean checkDifficulty(String difficulty){
+        for (String difficulties : this.availableDiffiiculties) {
+            if (difficulties.equals(difficulty)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void requestNameShell() {
+        String inputName = Terminal.readLine("Choose your name : ");
+        String name = inputName;
+        if (name.length()>15){
+            System.err.println("The name introduced is too long. The name length must be between 1-15 characters");
+            requestNameShell();
+        }
+        this.playerName = name;
+    }
+
+    private void setBoardSize() {
         for (int i=0; i<this.availableDiffiiculties.length; i++){
-            if (availableDiffiiculties[i].equals(difficulty)){
+            if (availableDiffiiculties[i].equals(this.difficulty)){
                 this.board = new int[availableBoardSizes[i][0]][availableBoardSizes[i][1]];
                 this.mineBoard = new boolean[availableBoardSizes[i][0]][availableBoardSizes[i][1]];
                 this.minesNumber = minesInDifficulties[i];
@@ -101,34 +134,36 @@ public class Game {
     private void printChar(int value) {
         switch (value) {
             case 0:
-                System.out.print("   ");
+                Terminal.printColor("   ");
                 break;
             case 1:
-                System.out.print(ANSI_WHITE+" 1 "+ANSI_RESET);
+                Terminal.printColor(" 1 ", "white");
                 break;
             case 2:
-                System.out.print(ANSI_CYAN+" 2 "+ANSI_RESET);
+                Terminal.printColor(" 2 ", "cyan");
                 break;
             case 3:
-                System.out.print(ANSI_RED+" 3 "+ANSI_RESET);
+                Terminal.printColor(" 3 ", "red");
                 break;
             case 4:
-                System.out.print(ANSI_PURPLE+" 4 "+ANSI_RESET);
+                Terminal.printColor(" 4 ", "magenta");
                 break;
             case 5:
-                System.out.print(ANSI_GREEN+" 5 "+ANSI_RESET);
+                Terminal.printColor(" 5 ", "green");
                 break;
             case 6:
-                System.out.print(ANSI_BLUE+" 6 "+ANSI_RESET);
+                Terminal.printColor(" 6 ", "blue");
                 break;
             case 7:
-                System.out.print(ANSI_YELLOW+" 7 "+ANSI_RESET);
+                Terminal.printColor(" 7 ", "yellow");
                 break;
             case 8:
-                System.out.print(ANSI_BLACK+" 8 "+ANSI_RESET);
+                Terminal.printColor(" 8 ", "black");
                 break;
             case 9:
-                System.out.print(" "+ANSI_BACKGROUND_RED +" "+ANSI_RESET+" ");
+                Terminal.printColor(" ");
+                Terminal.printColor(" ", "white", "red");
+                Terminal.printColor(" ");
                 break;
         
             default:

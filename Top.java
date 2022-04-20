@@ -166,11 +166,11 @@ public class Top {
         rewriteTop(difficulty);
     }
 
-    private static void checkDifficulty(String difficulty){
+    private static boolean checkDifficulty(String difficulty){
         if (!difficulty.equals("Easy") && !difficulty.equals("Medium") && !difficulty.equals("Hard")){
-            System.err.println("The difficulties available are: Easy, Medium and Hard.");
-            System.exit(1);
+            return false;
         }
+        return true;
     }
 
     private static int setVisibleTop(){
@@ -189,11 +189,19 @@ public class Top {
         return topSize;
     }
 
+    private static String requestDifficultyShell() {
+        String difficulty = Terminal.readLine("Choose the difficulty : ");
+        if(! checkDifficulty(difficulty)){
+            System.err.println("The difficulties available are: Easy, Medium and Hard.");
+            difficulty = requestDifficultyShell();
+        }
+        return difficulty;
+    }
+
 
     public static void main(String[] args) {
         int topSize = setVisibleTop();
-        String difficulty = HumanPlayer.setDifficulty();
-        checkDifficulty(difficulty);
+        String difficulty = requestDifficultyShell();
         setTops();
         readTop(difficulty);
         printTop(topSize);
